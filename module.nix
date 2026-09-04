@@ -166,6 +166,13 @@ in
               CODEG_MCP_BIN = "${cfg.package}/bin/codeg-mcp";
               CODEG_STATIC_DIR = "${cfg.package}/share/codeg/web";
               CODEG_DATA_DIR = cfg.dataDir;
+
+              # Agents Codeg downloads itself ship their own OpenSSL, built to
+              # look for /etc/ssl/cert.pem and the hashed /etc/ssl/certs/*.0
+              # symlinks that NixOS does not create. Without this they cannot
+              # complete a TLS handshake with their own backend; Antigravity
+              # surfaces that as an empty turn with a local 502.
+              SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
             }
             // cfg.extraEnvironment
           )
@@ -175,6 +182,10 @@ in
         Restart = "on-failure";
         RestartSec = "30s";
         UMask = "0077";
+
+        # Codeg supervises every agent subprocess it spawns, so the 1024 soft
+        # default is easy to exhaust once several sessions are live.
+        LimitNOFILE = 65536;
       };
     };
   };

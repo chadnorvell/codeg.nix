@@ -32,6 +32,10 @@ services.codeg.adapterPackages = with inputs.llm-agents.packages.${pkgs.stdenv.h
 ];
 ```
 
+The one tested exception to this is Antigravity CLI. Google doesn't provide a standalone ACP
+adapter, so using the one provided by Codeg is the easiest option. Fortunately, it does work on
+NixOS.
+
 ## Dealing with Nix shell/develop and direnv
 
 If you're here, you're probably a heavy user of Nix shells/flakes for your projects. They work fine
