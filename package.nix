@@ -9,20 +9,20 @@
 }:
 
 let
-  version = "0.30.2";
+  version = "0.30.3";
 
   sources = {
     aarch64-darwin = {
       archive = "darwin-arm64";
-      hash = "sha256-wF9Dap/qIdhPsWEQvlgibBFABbh8/idrUNS3kl3BBm8=";
+      hash = "sha256-an41gi6FGRt0vHrbVhTRRUE5kIZIJ4tW9rTTaeE9wmQ=";
     };
     aarch64-linux = {
       archive = "linux-arm64";
-      hash = "sha256-IpoyLojrkLSpTzgvZxjKoeTlfHxD75mccOQUja14n3I=";
+      hash = "sha256-JUeote/U93ZVko+0qIxTvxsu6DY1W9ySSz9AzCn/DV4=";
     };
     x86_64-linux = {
       archive = "linux-x64";
-      hash = "sha256-RAkGHUM6ExVAXOGbOgY/ACaUjHxesOE4ylkGTW0xVUk=";
+      hash = "sha256-47ma/PJdpr0Mz3p+BpUeootCjM1K/Vyo0A87ZMzDmeE=";
     };
   };
 
