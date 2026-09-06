@@ -7,13 +7,13 @@ for non-Nix information.
 
 Add this repo to your inputs, then do something like:
 
-```
+```nix
 imports = [ inputs.codeg.homeManagerModules.default ];
 services.codeg.enable = true;
 ```
 
-The Codeg server runs as a user systemd service and the the web UI is served at the default port.
-Note that this flake doesn't current provide the desktop (Tauri) app.
+The Codeg server runs as a user systemd service and the web UI is served at the default port.
+Note that this flake doesn't currently provide the desktop (Tauri) app.
 
 ## Dealing with Codeg-provided agent binaries
 
@@ -25,11 +25,18 @@ So you can get proper builds from a source like
 [numtide/llm-agents.nix](https://github.com/numtide/llm-agents.nix) and shim those into Codeg like
 this:
 
-```
+```nix
 services.codeg.adapterPackages = with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
   claude-agent-acp
   codex-acp
 ];
+```
+
+For the Pi coding agent, Codeg attempts to install `pi-acp` via a global npm install, which fails
+on NixOS. This flake provides a packaged `pi-acp` and a dedicated option:
+
+```nix
+services.codeg.pi-acp.enable = true;
 ```
 
 The one tested exception to this is Antigravity CLI. Google doesn't provide a standalone ACP
@@ -48,5 +55,5 @@ So if your project has a `.envrc` that says `use flake`, the whole `nix develop`
 up first, then the agent runtime will be executed from within that environment, exactly as you would
 want.
 
-You don't need to do anything to take advantage of this, because it's built in. However, at the
-moment this is only set up for Claude Code and Codex, so other runtimes don't get this behavior yet.
+You don't need to do anything to take advantage of this, because it's built in for Claude Code,
+Codex, and Pi (when `pi-acp` is enabled).

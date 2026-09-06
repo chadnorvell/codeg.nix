@@ -18,8 +18,10 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-        packages = {
-          default = pkgs.callPackage ./package.nix { };
+        packages = rec {
+          default = codeg-server;
+          codeg-server = pkgs.callPackage ./package.nix { };
+          pi-acp = pkgs.callPackage ./pi-acp.nix { };
         };
 
         devShells.default = pkgs.mkShell {

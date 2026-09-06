@@ -70,25 +70,37 @@ let
       '';
     };
 
+  adapterConfigs = [
+    {
+      adapterName = "claude-agent-acp";
+      agentCommand = "claude";
+      agentPathVariable = "CLAUDE_CODE_EXECUTABLE";
+    }
+    {
+      adapterName = "codex-acp";
+      agentCommand = "codex";
+      agentPathVariable = "CODEX_PATH";
+    }
+  ]
+  ++
+    lib.optionals
+      (cfg.pi-acp.enable || builtins.any (p: (p.pname or p.name or "") == "pi-acp") cfg.adapterPackages)
+      [
+        {
+          adapterName = "pi-acp";
+          agentCommand = "pi";
+          agentPathVariable = "PI_ACP_PI_COMMAND";
+        }
+      ];
+
   direnvAdapters = pkgs.symlinkJoin {
     name = "codeg-direnv-adapters";
-    paths = map mkDirenvAdapter [
-      {
-        adapterName = "claude-agent-acp";
-        agentCommand = "claude";
-        agentPathVariable = "CLAUDE_CODE_EXECUTABLE";
-      }
-      {
-        adapterName = "codex-acp";
-        agentCommand = "codex";
-        agentPathVariable = "CODEX_PATH";
-      }
-    ];
+    paths = map mkDirenvAdapter adapterConfigs;
   };
 
   realAdapters = pkgs.symlinkJoin {
     name = "codeg-acp-adapters";
-    paths = cfg.adapterPackages;
+    paths = cfg.adapterPackages ++ lib.optional cfg.pi-acp.enable cfg.pi-acp.package;
   };
 
   launcher = pkgs.writeShellScript "codeg-launcher" ''
@@ -124,6 +136,17 @@ in
       default = [ ];
       defaultText = lib.literalExpression "[]";
       description = "The real ACP adapters Codeg resolves by name.";
+    };
+
+    pi-acp = {
+      enable = lib.mkEnableOption "the pi-acp adapter for the Pi coding agent";
+
+      package = lib.mkOption {
+        type = lib.types.package;
+        default = self.packages.${pkgs.stdenv.hostPlatform.system}.pi-acp;
+        defaultText = lib.literalExpression "codeg.packages.\${system}.pi-acp";
+        description = "The pi-acp package to use.";
+      };
     };
 
     dataDir = lib.mkOption {
